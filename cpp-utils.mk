@@ -2,41 +2,33 @@
 
 define folder_compile =
 
-debug/src$(1)/%.cpp.o: src$(1)/%.cpp
-	@ mkdir -p debug/src$(1)/
+debug/$(1)/%.cpp.o: $(1)/%.cpp
+	@ mkdir -p debug/$(1)/
 	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -o $$@ -c $$<
 
-release/src$(1)/%.cpp.o: src$(1)/%.cpp
-	@ mkdir -p release/src$(1)/
+release/$(1)/%.cpp.o: $(1)/%.cpp
+	@ mkdir -p release/$(1)/
 	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -o $$@ -c $$<
 
-debug/src$(1)/%.cpp.d: $(CPP_FILES)
-	@ mkdir -p debug/src$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -MM -MT debug/src$(1)/$$*.cpp.o src$(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+debug/$(1)/%.cpp.d: $(CPP_FILES)
+	@ mkdir -p debug/$(1)/
+	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -MM -MT debug/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
 
-release/src$(1)/%.cpp.d: $(CPP_FILES)
-	@ mkdir -p release/src$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -MM -MT release/src$(1)/$$*.cpp.o src$(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+release/$(1)/%.cpp.d: $(CPP_FILES)
+	@ mkdir -p release/$(1)/
+	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -MM -MT release/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+
+endef
+
+define src_folder_compile =
+
+$(eval $(call folder_compile,src$(1)))
 
 endef
 
 define test_folder_compile =
 
-debug/test$(1)/%.cpp.o: test$(1)/%.cpp
-	@ mkdir -p debug/test$(1)/
-	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -o $$@ -c $$<
-
-release/test$(1)/%.cpp.o: test$(1)/%.cpp
-	@ mkdir -p release/test$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -o $$@ -c $$<
-
-debug/test$(1)/%.cpp.d: $(CPP_FILES)
-	@ mkdir -p debug/test$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -MM -MT debug/test$(1)/$$*.cpp.o test$(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
-
-release/test$(1)/%.cpp.d: $(CPP_FILES)
-	@ mkdir -p release/test$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -MM -MT release/test$(1)/$$*.cpp.o test$(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+$(eval $(call folder_compile,test$(1)))
 
 endef
 
@@ -44,25 +36,25 @@ endef
 
 define add_executable =
 
-debug/bin/$(1): $(addsuffix .o,$(addprefix debug/src/,$(2)))
+debug/bin/$(1): $(addsuffix .o,$(addprefix debug/,$(2)))
 	@ mkdir -p debug/bin/
 	$(LD) $(LD_FLAGS) $(3) $(DEBUG_FLAGS) -o $$@ $$+
 
-release/bin/$(1): $(addsuffix .o,$(addprefix release/src/,$(2)))
+release/bin/$(1): $(addsuffix .o,$(addprefix release/,$(2)))
 	@ mkdir -p release/bin/
 	$(LD) $(LD_FLAGS) $(3) $(RELEASE_FLAGS) -o $$@ $$+
 
 endef
 
+define add_src_executable =
+
+$(eval $(call add_executable,$(1),$(addprefix src/,$(2))))
+
+endef
+
 define add_test_executable =
 
-debug/bin/$(1): $(addsuffix .o,$(addprefix debug/test/,$(2)))
-	@ mkdir -p debug/bin/
-	$(LD) $(LD_FLAGS) $(3) $(DEBUG_FLAGS) -o $$@ $$+
-
-release/bin/$(1): $(addsuffix .o,$(addprefix release/test/,$(2)))
-	@ mkdir -p release/bin/
-	$(LD) $(LD_FLAGS) $(3) $(RELEASE_FLAGS) -o $$@ $$+
+$(eval $(call add_executable,$(1),$(addprefix test/,$(2))))
 
 endef
 
