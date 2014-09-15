@@ -13,7 +13,7 @@ LD_FLAGS=$(CXX_FLAGS)
 DEBUG_FLAGS=-g
 
 ifeq ($(CXX),clang++)
-	RELEASE_FLAGS=-g -DNDEBUG -Ofast -march=native -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -march=native -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
 else
-	RELEASE_FLAGS=-g -DNDEBUG -Ofast -march=native -fomit-frame-pointer
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -march=native -fomit-frame-pointer
 endif
