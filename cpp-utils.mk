@@ -67,3 +67,9 @@ debug_$(1): $(addprefix debug/bin/,$(2))
 $(1): release_$(1)
 
 endef
+
+.PHONY: base_clean
+
+base_clean:
+	rm -rf release/
+	rm -rf debug/
