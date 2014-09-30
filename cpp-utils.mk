@@ -58,6 +58,12 @@ $(eval $(call add_executable,$(1),$(addprefix test/,$(2))))
 
 endef
 
+define add_auto_src_executable =
+
+$(eval $(call add_executable,$(1),src/*.cpp))
+
+endef
+
 # Create executable sets targets
 
 define add_executable_set =
