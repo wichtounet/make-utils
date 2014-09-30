@@ -38,7 +38,7 @@ define auto_folder_compile =
 
 $(eval $(call folder_compile,$(1)))
 
-AUTO_SRC_FILES += $(wildcard $(1))
+AUTO_SRC_FILES += $(wildcard $(1)/*.cpp)
 
 endef
 
