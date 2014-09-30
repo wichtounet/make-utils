@@ -60,7 +60,7 @@ endef
 
 define add_auto_src_executable =
 
-$(eval $(call add_executable,$(1),src/*.cpp))
+$(eval $(call add_executable,$(1),$(wildcard src/*.cpp)))
 
 endef
 
