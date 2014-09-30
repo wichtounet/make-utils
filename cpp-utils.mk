@@ -98,9 +98,6 @@ define auto_finalize =
 AUTO_DEBUG_D_FILES=$(AUTO_SRC_FILES:%.cpp=debug/%.cpp.d)
 AUTO_RELEASE_D_FILES=$(AUTO_SRC_FILES:%.cpp=release/%.cpp.d)
 
--include $(AUTO_DEBUG_D_FILES)
--include $(AUTO_RELEASE_D_FILES)
-
 endef
 
 # Clean targets
