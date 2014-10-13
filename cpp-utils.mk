@@ -6,37 +6,37 @@ define folder_compile =
 
 debug/$(1)/%.cpp.o: $(1)/%.cpp
 	@ mkdir -p debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -o $$@ -c $$<
+	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -o $$@ -c $$<
 
 release/$(1)/%.cpp.o: $(1)/%.cpp
 	@ mkdir -p release/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -o $$@ -c $$<
+	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -o $$@ -c $$<
 
 debug/$(1)/%.cpp.d: $(CPP_FILES)
 	@ mkdir -p debug/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -MM -MT debug/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MM -MT debug/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
 
 release/$(1)/%.cpp.d: $(CPP_FILES)
 	@ mkdir -p release/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -MM -MT release/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MM -MT release/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
 
 endef
 
 define src_folder_compile =
 
-$(eval $(call folder_compile,src$(1)))
+$(eval $(call folder_compile,src$(1),$(2)))
 
 endef
 
 define test_folder_compile =
 
-$(eval $(call folder_compile,test$(1)))
+$(eval $(call folder_compile,test$(1),$(2)))
 
 endef
 
 define auto_folder_compile =
 
-$(eval $(call folder_compile,$(1)))
+$(eval $(call folder_compile,$(1),$(2)))
 
 AUTO_SRC_FILES += $(wildcard $(1)/*.cpp)
 
