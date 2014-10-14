@@ -13,7 +13,12 @@ LD_FLAGS=$(CXX_FLAGS)
 DEBUG_FLAGS=-g
 
 ifneq (,$(findstring,clang,$(CXX)))
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -march=native -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
 else
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -march=native -fomit-frame-pointer
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -fomit-frame-pointer
+endif
+
+# If we do not compile with distcc, enable march=native
+ifeq (,$(findstring,distcc,$(CXX)))
+	RELEASE_FLAGS += -march=native
 endif
