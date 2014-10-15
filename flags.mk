@@ -18,7 +18,10 @@ else
 	RELEASE_FLAGS=-g -DNDEBUG -O3 -fomit-frame-pointer
 endif
 
-# If we do not compile with distcc, enable march=native
-ifeq (,$(findstring distcc,$(CXX)))
+ifneq (,$(findstring distcc,$(CXX)))
+	#Find the equivalent march
+	RELEASE_FLAGS += -march=`g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1`
+else
+	#Without distcc, just use march=native
 	RELEASE_FLAGS += -march=native
 endif
