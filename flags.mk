@@ -21,6 +21,8 @@ endif
 ifneq (,$(findstring distcc,$(CXX)))
 	#Find the equivalent march
 	RELEASE_FLAGS += -march=`g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1`
+
+	#TODO This is enough for clang++, but GCC needs much more arguments to simulate march=native
 else
 	#Without distcc, just use march=native
 	RELEASE_FLAGS += -march=native
