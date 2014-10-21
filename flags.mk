@@ -19,8 +19,17 @@ else
 endif
 
 ifneq (,$(findstring distcc,$(CXX)))
+	arch=$(shell g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1)
+	
+# The equivalent of haswell for clang is core-avx2
+ifeq (haswell,$(arch))
+ifneq (,$(findstring clang,$(CXX)))
+	arch=core-avx2
+endif
+endif
+
 	#Find the equivalent march
-	RELEASE_FLAGS += -march=`g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1`
+	RELEASE_FLAGS += -march=$(arch)
 
 	#TODO This is enough for clang++, but GCC needs much more arguments to simulate march=native
 else
