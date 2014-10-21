@@ -58,13 +58,13 @@ endef
 
 define add_src_executable =
 
-$(eval $(call add_executable,$(1),$(addprefix src/,$(2))))
+$(eval $(call add_executable,$(1),$(addprefix src/,$(2)),$(3)))
 
 endef
 
 define add_test_executable =
 
-$(eval $(call add_executable,$(1),$(addprefix test/,$(2))))
+$(eval $(call add_executable,$(1),$(addprefix test/,$(2)),$(3)))
 
 endef
 
@@ -93,7 +93,7 @@ endef
 
 # Include D files
 
-define auto_finalize = 
+define auto_finalize =
 
 AUTO_DEBUG_D_FILES=$(AUTO_SRC_FILES:%.cpp=debug/%.cpp.d)
 AUTO_RELEASE_D_FILES=$(AUTO_SRC_FILES:%.cpp=release/%.cpp.d)
