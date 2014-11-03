@@ -1,6 +1,3 @@
-CXX=clang++
-LD=clang++
-
 ifneq (,$(findstring clang,$(CXX)))
 	WARNING_FLAGS=-Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
 else
@@ -20,7 +17,7 @@ endif
 
 ifneq (,$(findstring distcc,$(CXX)))
 	arch=$(shell g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1)
-	
+
 # The equivalent of haswell for clang is core-avx2
 ifeq (haswell,$(arch))
 ifneq (,$(findstring clang,$(CXX)))
