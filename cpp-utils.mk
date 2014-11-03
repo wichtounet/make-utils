@@ -48,11 +48,11 @@ define add_executable
 
 debug/bin/$(1): $(addsuffix .o,$(addprefix debug/,$(2)))
 	@ mkdir -p debug/bin/
-	$(LD) $(LD_FLAGS) $(3) $(DEBUG_FLAGS) -o $$@ $$+
+	$(LD) $(DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 release/bin/$(1): $(addsuffix .o,$(addprefix release/,$(2)))
 	@ mkdir -p release/bin/
-	$(LD) $(LD_FLAGS) $(3) $(RELEASE_FLAGS) -o $$@ $$+
+	$(LD) $(RELEASE_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 endef
 
