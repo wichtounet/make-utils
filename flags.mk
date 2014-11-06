@@ -1,7 +1,11 @@
 ifneq (,$(findstring clang,$(CXX)))
 	WARNING_FLAGS=-Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
 else
+ifneq (,$(findstring c++-analyzer,$(CXX)))
+	WARNING_FLAGS=-Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
+else
 	WARNING_FLAGS=-Wextra -Wall -Wuninitialized -Wno-long-long -Winit-self
+endif
 endif
 
 CXX_FLAGS=-Iinclude -std=c++1y $(WARNING_FLAGS)
@@ -12,7 +16,11 @@ DEBUG_FLAGS=-g
 ifneq (,$(findstring clang,$(CXX)))
 	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
 else
+ifneq (,$(findstring c++-analyzer,$(CXX)))
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
+else
 	RELEASE_FLAGS=-g -DNDEBUG -O3 -fomit-frame-pointer
+endif
 endif
 
 ifneq (,$(findstring distcc,$(CXX)))
@@ -21,6 +29,9 @@ ifneq (,$(findstring distcc,$(CXX)))
 # The equivalent of haswell for clang is core-avx2
 ifeq (haswell,$(arch))
 ifneq (,$(findstring clang,$(CXX)))
+	arch=core-avx2
+endif
+ifneq (,$(findstring c++-analyzer,$(CXX)))
 	arch=core-avx2
 endif
 endif
