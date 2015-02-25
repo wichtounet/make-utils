@@ -1,6 +1,7 @@
 # Create rules to compile each cpp file of a folder
 
-AUTO_SRC_FILES=
+AUTO_CXX_SRC_FILES=
+AUTO_SIMPLE_C_SRC_FILES=
 
 define folder_compile
 
@@ -59,6 +60,7 @@ define auto_folder_compile
 $(eval $(call folder_compile,$(1),$(2)))
 
 AUTO_SRC_FILES += $(wildcard $(1)/*.cpp)
+AUTO_CXX_SRC_FILES += $(wildcard $(1)/*.cpp)
 
 endef
 
@@ -67,6 +69,7 @@ define auto_simple_c_folder_compile
 $(eval $(call simple_c_folder_compile,$(1),$(2)))
 
 AUTO_SRC_FILES += $(wildcard $(1)/*.c)
+AUTO_SIMPLE_C_SRC_FILES += $(wildcard $(1)/*.c)
 
 endef
 
@@ -123,8 +126,8 @@ endef
 
 define auto_finalize
 
-AUTO_DEBUG_D_FILES=$(AUTO_SRC_FILES:%.cpp=debug/%.cpp.d)
-AUTO_RELEASE_D_FILES=$(AUTO_SRC_FILES:%.cpp=release/%.cpp.d)
+AUTO_DEBUG_D_FILES=$(AUTO_CXX_SRC_FILES:%.cpp=debug/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=debug/%.c.d)
+AUTO_RELEASE_D_FILES=$(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=debug/%.c.d)
 
 endef
 
