@@ -22,6 +22,26 @@ release/$(1)/%.cpp.d: $(CPP_FILES)
 
 endef
 
+define simple_c_folder_compile
+
+debug/$(1)/%.c.o: $(1)/%.c
+	@ mkdir -p debug/$(1)/
+	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -o $$@ -c $$<
+
+release/$(1)/%.c.o: $(1)/%.c
+	@ mkdir -p release/$(1)/
+	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -o $$@ -c $$<
+
+debug/$(1)/%.c.d: $(C_FILES)
+	@ mkdir -p debug/$(1)/
+	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MM -MT debug/$(1)/$$*.c.o $(1)/$$*.c | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+
+release/$(1)/%.c.d: $(C_FILES)
+	@ mkdir -p release/$(1)/
+	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MM -MT release/$(1)/$$*.c.o $(1)/$$*.c | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+
+endef
+
 define src_folder_compile
 
 $(eval $(call folder_compile,src$(1),$(2)))
@@ -39,6 +59,14 @@ define auto_folder_compile
 $(eval $(call folder_compile,$(1),$(2)))
 
 AUTO_SRC_FILES += $(wildcard $(1)/*.cpp)
+
+endef
+
+define auto_simple_c_folder_compile
+
+$(eval $(call simple_c_folder_compile,$(1),$(2)))
+
+AUTO_SRC_FILES += $(wildcard $(1)/*.c)
 
 endef
 
