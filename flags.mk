@@ -12,6 +12,7 @@ CXX_FLAGS=-Iinclude -std=c++1y $(WARNING_FLAGS)
 LD_FLAGS=$(CXX_FLAGS)
 
 DEBUG_FLAGS=-g
+RELEASE_DEBUG_FLAGS=-g -O2
 
 ifneq (,$(findstring clang,$(CXX)))
 	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
@@ -22,6 +23,8 @@ else
 	RELEASE_FLAGS=-g -DNDEBUG -O3 -fomit-frame-pointer
 endif
 endif
+
+## Find the correct arch
 
 ifneq (,$(findstring distcc,$(CXX)))
 	arch=$(shell g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1)
