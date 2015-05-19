@@ -48,6 +48,8 @@ else
 	RELEASE_FLAGS += -march=native
 endif
 
+# Use libc++ if the compiler is clang
+
 define use_libcxx
 
 ifneq (,$(findstring clang,$(CXX)))
@@ -56,6 +58,20 @@ endif
 
 ifneq (,$(findstring c++-analyzer,$(CXX)))
 CXX_FLAGS += -stdlib=libc++
+endif
+
+endef
+
+# Enable coverage flags
+
+define enable_coverage
+
+ifneq (,$(findstring clang,$(CXX)))
+DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
+else
+ifneq (,$(findstring g++,$(CXX)))
+DEBUG_FLAGS += --coverage
+endif
 endif
 
 endef
