@@ -41,11 +41,13 @@ endif
 
 	#Find the equivalent march
 	RELEASE_FLAGS += -march=$(arch)
+	RELEASE_DEBUG_FLAGS += -march=$(arch)
 
 	#TODO This is enough for clang++, but GCC needs much more arguments to simulate march=native
 else
 	#Without distcc, just use march=native
 	RELEASE_FLAGS += -march=native
+	RELEASE_DEBUG_FLAGS += -march=native
 endif
 
 # Use libc++ if the compiler is clang
