@@ -47,3 +47,15 @@ else
 	#Without distcc, just use march=native
 	RELEASE_FLAGS += -march=native
 endif
+
+define use_libcxx
+
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -stdlib=libc++
+endif
+
+ifneq (,$(findstring c++-analyzer,$(CXX)))
+CXX_FLAGS += -stdlib=libc++
+endif
+
+endef
