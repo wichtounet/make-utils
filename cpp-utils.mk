@@ -179,7 +179,17 @@ AUTO_RELEASE_DEBUG_D_FILES=$(AUTO_CXX_SRC_FILES:%.cpp=release_debug/%.cpp.d) $(A
 
 endef
 
-# Clean targets
+# Target to generate the compilation database for clang
+
+.PHONY: compile_db
+
+compile_commands.json:
+	${MAKE} clean
+	bear make debug
+
+compile_db: compile_commands.json ;
+
+# Clean target
 
 .PHONY: base_clean
 
