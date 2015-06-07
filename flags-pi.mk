@@ -8,7 +8,7 @@ else
 endif
 endif
 
-CXX_FLAGS=-Iinclude -std=c++11 $(WARNING_FLAGS)
+CXX_FLAGS=-Iinclude -std=c++0x $(WARNING_FLAGS)
 LD_FLAGS=$(CXX_FLAGS)
 
 DEBUG_FLAGS=-g
