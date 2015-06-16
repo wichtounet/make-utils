@@ -7,27 +7,18 @@ define folder_compile
 
 debug/$(1)/%.cpp.o: $(1)/%.cpp
 	@ mkdir -p debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -o $$@ -c $$<
+	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cpp.d
 
 release/$(1)/%.cpp.o: $(1)/%.cpp
 	@ mkdir -p release/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -o $$@ -c $$<
+	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cpp.d
 
 release_debug/$(1)/%.cpp.o: $(1)/%.cpp
 	@ mkdir -p release_debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -o $$@ -c $$<
-
-debug/$(1)/%.cpp.d: $(CPP_FILES)
-	@ mkdir -p debug/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MM -MT debug/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
-
-release/$(1)/%.cpp.d: $(CPP_FILES)
-	@ mkdir -p release/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MM -MT release/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
-
-release_debug/$(1)/%.cpp.d: $(CPP_FILES)
-	@ mkdir -p release_debug/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MM -MT release_debug/$(1)/$$*.cpp.o $(1)/$$*.cpp | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+	$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cpp.d
 
 endef
 
