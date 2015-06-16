@@ -28,27 +28,18 @@ define simple_c_folder_compile
 
 debug/$(1)/%.c.o: $(1)/%.c
 	@ mkdir -p debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -o $$@ -c $$<
+	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.c.d -o debug/$(1)/$$*.c.o -c $(1)/$$*.c
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.c.d
 
 release/$(1)/%.c.o: $(1)/%.c
 	@ mkdir -p release/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -o $$@ -c $$<
+	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.c.d -o release/$(1)/$$*.c.o -c $(1)/$$*.c
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.c.d
 
 release_debug/$(1)/%.c.o: $(1)/%.c
 	@ mkdir -p release_debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -o $$@ -c $$<
-
-debug/$(1)/%.c.d: $(C_FILES)
-	@ mkdir -p debug/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MM -MT debug/$(1)/$$*.c.o $(1)/$$*.c | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
-
-release/$(1)/%.c.d: $(C_FILES)
-	@ mkdir -p release/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MM -MT release/$(1)/$$*.c.o $(1)/$$*.c | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
-
-release_debug/$(1)/%.c.d: $(C_FILES)
-	@ mkdir -p release_debug/$(1)/
-	@ $(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MM -MT release_debug/$(1)/$$*.c.o $(1)/$$*.c | sed -e 's@^\(.*\)\.o:@\1.d \1.o:@' > $$@
+	$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.c.d -o release_debug/$(1)/$$*.c.o -c $(1)/$$*.c
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.c.d
 
 endef
 
