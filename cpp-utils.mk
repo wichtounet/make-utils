@@ -1,23 +1,32 @@
 AUTO_CXX_SRC_FILES=
 AUTO_SIMPLE_C_SRC_FILES=
 
+NO_COLOR=\x1b[0m
+MODE_COLOR=\x1b[31;01m
+FILE_COLOR=\x1b[35;01m
+
+Q = @
+
 # Create rules to compile each .cpp file of a folder
 
 define folder_compile
 
 debug/$(1)/%.cpp.o: $(1)/%.cpp
-	@ mkdir -p debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@mkdir -p debug/$(1)/
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cpp.d
 
 release/$(1)/%.cpp.o: $(1)/%.cpp
-	@ mkdir -p release/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@mkdir -p release/$(1)/
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cpp.d
 
 release_debug/$(1)/%.cpp.o: $(1)/%.cpp
-	@ mkdir -p release_debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@mkdir -p release_debug/$(1)/
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cpp.d
 
 endef
@@ -28,17 +37,20 @@ define simple_c_folder_compile
 
 debug/$(1)/%.c.o: $(1)/%.c
 	@ mkdir -p debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.c.d -o debug/$(1)/$$*.c.o -c $(1)/$$*.c
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.c.d -o debug/$(1)/$$*.c.o -c $(1)/$$*.c
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.c.d
 
 release/$(1)/%.c.o: $(1)/%.c
 	@ mkdir -p release/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.c.d -o release/$(1)/$$*.c.o -c $(1)/$$*.c
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.c.d -o release/$(1)/$$*.c.o -c $(1)/$$*.c
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.c.d
 
 release_debug/$(1)/%.c.o: $(1)/%.c
 	@ mkdir -p release_debug/$(1)/
-	$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.c.d -o release_debug/$(1)/$$*.c.o -c $(1)/$$*.c
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.c.d -o release_debug/$(1)/$$*.c.o -c $(1)/$$*.c
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.c.d
 
 endef
@@ -86,16 +98,19 @@ endef
 define add_executable
 
 debug/bin/$(1): $(addsuffix .o,$(addprefix debug/,$(2)))
-	@ mkdir -p debug/bin/
-	$(LD) $(DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	@mkdir -p debug/bin/
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
+	$(Q)$(LD) $(DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 release/bin/$(1): $(addsuffix .o,$(addprefix release/,$(2)))
-	@ mkdir -p release/bin/
-	$(LD) $(RELEASE_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	@mkdir -p release/bin/
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
+	$(Q)$(LD) $(RELEASE_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 release_debug/bin/$(1): $(addsuffix .o,$(addprefix release_debug/,$(2)))
-	@ mkdir -p release_debug/bin/
-	$(LD) $(RELEASE_DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	@mkdir -p release_debug/bin/
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
+	$(Q)$(LD) $(RELEASE_DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 endef
 
