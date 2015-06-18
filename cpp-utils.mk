@@ -14,19 +14,19 @@ define folder_compile
 debug/$(1)/%.cpp.o: $(1)/%.cpp
 	@mkdir -p debug/$(1)/
 	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -MD -MF debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cpp.d
 
 release/$(1)/%.cpp.o: $(1)/%.cpp
 	@mkdir -p release/$(1)/
 	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -MD -MF release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cpp.d
 
 release_debug/$(1)/%.cpp.o: $(1)/%.cpp
 	@mkdir -p release_debug/$(1)/
 	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cpp.d
 
 endef
@@ -57,29 +57,56 @@ endef
 
 define precompile_header
 
-debug/include/$(1).gch: $(1)/$(2)
+debug/$(1)/$(2).gch: $(1)/$(2)
 	@mkdir -p debug/$(1)/
 	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -MD -MF debug/$(1)/$(2).d -o debug/$(1)/$(2).gch -c $(1)/$(2)
+	$(Q)$(CXX) -Idebug/include $(DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF debug/$(1)/$(2).d -o debug/$(1)/$(2).gch -c $(1)/$(2)
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$(2).d
+	@ echo "#error PCH Header was not used (probably invalid)" > debug/$(1)/$(2)
 
-release/include/$(1).gch: $(1)/$(2)
+release/$(1)/$(2).gch: $(1)/$(2)
 	@mkdir -p release/$(1)/
 	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -MD -MF release/$(1)/$(2).d -o release/$(1)/$(2).gch -c $(1)/$(2)
+	$(Q)$(CXX) -Irelease/include $(RELEASE_FLAGS) $(CXX_FLAGS) -MD -MF release/$(1)/$(2).d -o release/$(1)/$(2).gch -c $(1)/$(2)
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$(2).d
+	@ echo "#error PCH Header was not used (probably invalid)" > release/$(1)/$(2)
 
-release_debug/include/$(1).gch: $(1)/$(2)
+release_debug/$(1)/$(2).gch: $(1)/$(2)
 	@mkdir -p release_debug/$(1)/
 	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) -MD -MF release_debug/$(1)/$(2).d -o release_debug/$(1)/$(2).gch -c $(1)/$(2)
+	$(Q)$(CXX) -Irelease_debug/include $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF release_debug/$(1)/$(2).d -o release_debug/$(1)/$(2).gch -c $(1)/$(2)
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$(2).d
+	@ echo "#error PCH Header was not used (probably invalid)" > release_debug/$(1)/$(2)
+
+DEBUG_PCH_FILES += debug/$(1)/$(2).gch
+RELEASE_PCH_FILES += release/$(1)/$(2).gch
+RELEASE_DEBUG_PCH_FILES += release_debug/$(1)/$(2).gch
 
 AUTO_DEBUG_D_FILES += debug/$(1)/$(2).d
 AUTO_RELEASE_D_FILES += release/$(1)/$(2).d
 AUTO_RELEASE_DEBUG_D_FILES += release_debug/$(1)/$(2).d
 
 endef
+
+define precompile_finalize
+
+.PHONY: debug_pch release_pch release_debug_pch
+
+debug_pch: $(DEBUG_PCH_FILES)
+release_pch: $(RELEASE_PCH_FILES)
+release_debug_pch: $(RELEASE_DEBUG_PCH_FILES)
+
+clean_pch:
+	rm -rf $(DEBUG_PCH_FILES)
+	rm -rf $(RELEASE_PCH_FILES)
+	rm -rf $(RELEASE_DEBUG_PCH_FILES)
+
+DEBUG_FLAGS = -Idebug/include $(DEBUG_FLAGS)
+RELEASE_FLAGS = -Irelease/include $(RELEASE_FLAGS)
+RELEASE_DEBUG_FLAGS = -Irelease_debug/include $(RELEASE_DEBUG_FLAGS)
+
+endef
+
 
 # Create rules to compile the src folder
 
