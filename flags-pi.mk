@@ -1,3 +1,7 @@
+# This file contains flags that are more limited in order to make
+# a program compile on a Raspberry Pi
+
+# Define warnings flags
 ifneq (,$(findstring clang,$(CXX)))
 	WARNING_FLAGS=-Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
 else

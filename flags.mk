@@ -1,18 +1,19 @@
+# Define defaults warnings flags
 ifneq (,$(findstring clang,$(CXX)))
-	WARNING_FLAGS=-Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
+	WARNING_FLAGS += -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
 else
 ifneq (,$(findstring c++-analyzer,$(CXX)))
-	WARNING_FLAGS=-Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
+	WARNING_FLAGS += -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
 else
-	WARNING_FLAGS=-Wextra -Wall -Wuninitialized -Wno-long-long -Winit-self
+	WARNING_FLAGS += -Wextra -Wall -Wuninitialized -Wno-long-long -Winit-self
 endif
 endif
 
-CXX_FLAGS=-Iinclude -std=c++1y $(WARNING_FLAGS)
-LD_FLAGS=$(CXX_FLAGS)
+CXX_FLAGS += -Iinclude -std=c++1y $(WARNING_FLAGS)
+LD_FLAGS += $(CXX_FLAGS)
 
-DEBUG_FLAGS=-g
-RELEASE_DEBUG_FLAGS=-g -O2
+DEBUG_FLAGS += -g
+RELEASE_DEBUG_FLAGS += -g -O2
 
 ifneq (,$(findstring clang,$(CXX)))
 	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
@@ -24,7 +25,7 @@ else
 endif
 endif
 
-## Find the correct arch
+# Find the correct arch (when using distcc)
 
 ifneq (,$(findstring distcc,$(CXX)))
 	arch=$(shell g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1)
@@ -64,7 +65,7 @@ endif
 
 endef
 
-# Enable coverage flags
+# Enable coverage flags on debug mode only
 
 define enable_coverage
 
