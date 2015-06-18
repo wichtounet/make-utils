@@ -5,7 +5,7 @@ NO_COLOR=\x1b[0m
 MODE_COLOR=\x1b[31;01m
 FILE_COLOR=\x1b[35;01m
 
-Q = @
+Q ?= @
 
 # Create rules to compile each .cpp file of a folder
 
