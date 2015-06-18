@@ -55,6 +55,32 @@ release_debug/$(1)/%.c.o: $(1)/%.c
 
 endef
 
+define precompile_header
+
+debug/include/$(1).gch: $(1)/$(2)
+	@mkdir -p debug/$(1)/
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) -MD -MF debug/$(1)/$(2).d -o debug/$(1)/$(2).gch -c $(1)/$(2)
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$(2).d
+
+release/include/$(1).gch: $(1)/$(2)
+	@mkdir -p release/$(1)/
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) -MD -MF release/$(1)/$(2).d -o release/$(1)/$(2).gch -c $(1)/$(2)
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$(2).d
+
+release_debug/include/$(1).gch: $(1)/$(2)
+	@mkdir -p release_debug/$(1)/
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
+	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) -MD -MF release_debug/$(1)/$(2).d -o release_debug/$(1)/$(2).gch -c $(1)/$(2)
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$(2).d
+
+AUTO_DEBUG_D_FILES += debug/$(1)/$(2).d
+AUTO_RELEASE_D_FILES += release/$(1)/$(2).d
+AUTO_RELEASE_DEBUG_D_FILES += release_debug/$(1)/$(2).d
+
+endef
+
 # Create rules to compile the src folder
 
 define src_folder_compile
@@ -170,9 +196,9 @@ endef
 
 define auto_finalize
 
-AUTO_DEBUG_D_FILES=$(AUTO_CXX_SRC_FILES:%.cpp=debug/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=debug/%.c.d)
-AUTO_RELEASE_D_FILES=$(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release/%.c.d)
-AUTO_RELEASE_DEBUG_D_FILES=$(AUTO_CXX_SRC_FILES:%.cpp=release_debug/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release_debug/%.c.d)
+AUTO_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=debug/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=debug/%.c.d)
+AUTO_RELEASE_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release/%.c.d)
+AUTO_RELEASE_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release_debug/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release_debug/%.c.d)
 
 endef
 
