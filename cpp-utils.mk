@@ -55,26 +55,34 @@ release_debug/$(1)/%.c.o: $(1)/%.c
 
 endef
 
+define precompile_init
+
+DEBUG_FLAGS = -Idebug/$(1) $(DEBUG_FLAGS)
+RELEASE_FLAGS = -Irelease/$(1) $(RELEASE_FLAGS)
+RELEASE_DEBUG_FLAGS = -Irelease_debug/$(1) $(RELEASE_DEBUG_FLAGS)
+
+endef
+
 define precompile_header
 
 debug/$(1)/$(2).gch: $(1)/$(2)
 	@mkdir -p debug/$(1)/
 	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) -Idebug/include $(DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF debug/$(1)/$(2).d -o debug/$(1)/$(2).gch -c $(1)/$(2)
+	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF debug/$(1)/$(2).d -o debug/$(1)/$(2).gch -c $(1)/$(2)
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$(2).d
 	@ echo "#error PCH Header was not used (probably invalid)" > debug/$(1)/$(2)
 
 release/$(1)/$(2).gch: $(1)/$(2)
 	@mkdir -p release/$(1)/
 	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) -Irelease/include $(RELEASE_FLAGS) $(CXX_FLAGS) -MD -MF release/$(1)/$(2).d -o release/$(1)/$(2).gch -c $(1)/$(2)
+	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) -MD -MF release/$(1)/$(2).d -o release/$(1)/$(2).gch -c $(1)/$(2)
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$(2).d
 	@ echo "#error PCH Header was not used (probably invalid)" > release/$(1)/$(2)
 
 release_debug/$(1)/$(2).gch: $(1)/$(2)
 	@mkdir -p release_debug/$(1)/
 	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) -Irelease_debug/include $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF release_debug/$(1)/$(2).d -o release_debug/$(1)/$(2).gch -c $(1)/$(2)
+	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF release_debug/$(1)/$(2).d -o release_debug/$(1)/$(2).gch -c $(1)/$(2)
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$(2).d
 	@ echo "#error PCH Header was not used (probably invalid)" > release_debug/$(1)/$(2)
 
@@ -100,10 +108,6 @@ clean_pch:
 	rm -rf $(DEBUG_PCH_FILES)
 	rm -rf $(RELEASE_PCH_FILES)
 	rm -rf $(RELEASE_DEBUG_PCH_FILES)
-
-DEBUG_FLAGS = -Idebug/include $(DEBUG_FLAGS)
-RELEASE_FLAGS = -Irelease/include $(RELEASE_FLAGS)
-RELEASE_DEBUG_FLAGS = -Irelease_debug/include $(RELEASE_DEBUG_FLAGS)
 
 endef
 
