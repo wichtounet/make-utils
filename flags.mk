@@ -28,7 +28,11 @@ endif
 # Find the correct arch (when using distcc)
 
 ifneq (,$(findstring distcc,$(CXX)))
+ifeq (,$(COMPILER_ARCH))
 	arch=$(shell g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1)
+else
+	arch=$(COMPILER_ARCH)
+endif
 
 # The equivalent of haswell for clang is core-avx2
 ifeq (haswell,$(arch))
