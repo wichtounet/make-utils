@@ -13,7 +13,7 @@ Basic Example
 
 Here is a base example of using it for a simple program:
 
-.. code:: makefile
+.. code::
     default: release
 
     .PHONY: default release debug all clean
