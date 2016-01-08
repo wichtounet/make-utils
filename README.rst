@@ -51,6 +51,6 @@ More Examples
 This project is used in other projects, here are the makefiles:
 
 * cpm project (simple): https://github.com/wichtounet/cpm/blob/master/Makefile
-* eddic project (complex): https://github.com/wichtounet/eddic/blob/master/Makefile
+* eddic project (complex): https://github.com/wichtounet/eddic/blob/develop/Makefile
 * etl project (complex): https://github.com/wichtounet/etl/blob/master/Makefile
 * dll project (complex): https://github.com/wichtounet/dll/blob/master/Makefile
