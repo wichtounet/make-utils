@@ -11,9 +11,8 @@ Ideally, you should put the make-utils directory directly in your project root t
 Basic Example
 #############
 
-Here is a base example of using it for a simple program:
+Here is a base example of using it for a simple program::
 
-.. code::
     default: release
 
     .PHONY: default release debug all clean
