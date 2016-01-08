@@ -13,7 +13,7 @@ Basic Example
 
 Here is a base example of using it for a simple program:
 
-.. code:: make
+.. code:: makefile
     default: release
 
     .PHONY: default release debug all clean
@@ -51,7 +51,7 @@ More Examples
 
 This project is used in other projects, here are the makefiles:
 
-    * cpm project (simple): https://github.com/wichtounet/cpm/blob/master/Makefile
-    * eddic project (complex): https://github.com/wichtounet/eddic/blob/master/Makefile
-    * etl project (complex): https://github.com/wichtounet/etl/blob/master/Makefile
-    * dll project (complex): https://github.com/wichtounet/dll/blob/master/Makefile
+* cpm project (simple): https://github.com/wichtounet/cpm/blob/master/Makefile
+* eddic project (complex): https://github.com/wichtounet/eddic/blob/master/Makefile
+* etl project (complex): https://github.com/wichtounet/etl/blob/master/Makefile
+* dll project (complex): https://github.com/wichtounet/dll/blob/master/Makefile
