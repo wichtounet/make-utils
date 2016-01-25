@@ -1,4 +1,5 @@
-# Define defaults warnings flags
+# Define defaults warnings flags for each compiler
+
 ifneq (,$(findstring clang,$(CXX)))
 	WARNING_FLAGS += -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
 else
@@ -14,6 +15,8 @@ LD_FLAGS += $(CXX_FLAGS)
 
 DEBUG_FLAGS += -g
 RELEASE_DEBUG_FLAGS += -g -O2
+
+# Optimize flags based on compiler
 
 ifneq (,$(findstring clang,$(CXX)))
 	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
@@ -53,6 +56,12 @@ else
 	#Without distcc, just use march=native
 	RELEASE_FLAGS += -march=native
 	RELEASE_DEBUG_FLAGS += -march=native
+endif
+
+# Add support flags for templight
+
+ifneq (,$(findstring templight,$(CXX)))
+CXX_FLAGS += -Xtemplight -profiler -Xtemplight -memory -Xtemplight -ignore-system
 endif
 
 # Use libc++ if the compiler is clang
