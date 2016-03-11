@@ -11,6 +11,8 @@ Q ?= @
 
 define folder_compile
 
+# Object files
+
 debug/$(1)/%.cpp.o: $(1)/%.cpp
 	@mkdir -p debug/$(1)/
 	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
@@ -28,6 +30,23 @@ release_debug/$(1)/%.cpp.o: $(1)/%.cpp
 	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
 	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
 	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cpp.d
+
+# Assembly files
+
+debug/$(1)/%.cpp.s: $(1)/%.cpp
+	@mkdir -p debug/$(1)/
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) -S $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -o debug/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
+
+release/$(1)/%.cpp.s: $(1)/%.cpp
+	@mkdir -p release/$(1)/
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) -S $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -o release/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
+
+release_debug/$(1)/%.cpp.s: $(1)/%.cpp
+	@mkdir -p release_debug/$(1)/
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) -S $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -o release_debug/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
 
 endef
 
