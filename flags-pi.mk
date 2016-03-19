@@ -15,7 +15,7 @@ endif
 CXX_FLAGS=-Iinclude -std=c++0x $(WARNING_FLAGS)
 
 # Indicate that this is a Pi
-ifneq (,$(MAKE_NO_RPI))
+ifeq (,$(MAKE_NO_RPI))
 	CXX_FLAGS += -D__RPI__
 endif
 
