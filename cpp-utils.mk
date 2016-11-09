@@ -176,17 +176,17 @@ define add_executable
 debug/bin/$(1): $(addsuffix .o,$(addprefix debug/,$(2)))
 	@mkdir -p debug/bin/
 	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(LD) $(DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(CXX) $(DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 release/bin/$(1): $(addsuffix .o,$(addprefix release/,$(2)))
 	@mkdir -p release/bin/
 	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(LD) $(RELEASE_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(CXX) $(RELEASE_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 release_debug/bin/$(1): $(addsuffix .o,$(addprefix release_debug/,$(2)))
 	@mkdir -p release_debug/bin/
 	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(LD) $(RELEASE_DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 endef
 
