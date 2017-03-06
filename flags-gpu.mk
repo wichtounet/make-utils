@@ -19,12 +19,12 @@ RELEASE_DEBUG_FLAGS += -g -O2
 # Optimize flags based on compiler
 
 ifneq (,$(findstring clang,$(CXX)))
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -Xcompiler -fomit-frame-pointer
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -Xcompiler -O3 -Xcompiler -fvectorize -Xcompiler -fslp-vectorize-aggressive -Xcompiler -fomit-frame-pointer
 else
 ifneq (,$(findstring c++-analyzer,$(CXX)))
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -Xcompiler -fomit-frame-pointer
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -Xcompiler -O3 -Xcompiler -fvectorize -Xcompiler -fslp-vectorize-aggressive -Xcompiler -fomit-frame-pointer
 else
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -Xcompiler -fomit-frame-pointer
+	RELEASE_FLAGS=-g -DNDEBUG -O3 -Xcompiler -O3 -Xcompiler -fomit-frame-pointer
 endif
 endif
 
