@@ -234,6 +234,27 @@ release_debug/bin/$(1): $(addsuffix .o,$(addprefix release_debug/,$(2)))
 
 endef
 
+# Create rules to link a shared library with a set of files
+
+define add_shared_library
+
+debug/lib/$(1).so: $(addsuffix .o,$(addprefix debug/,$(2)))
+	@mkdir -p debug/lib/
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
+	$(Q)$(CXX) $(DEBUG_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
+
+release/lib/$(1).so: $(addsuffix .o,$(addprefix release/,$(2)))
+	@mkdir -p release/lib/
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
+	$(Q)$(CXX) $(RELEASE_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
+
+release_debug/lib/$(1).so: $(addsuffix .o,$(addprefix release_debug/,$(2)))
+	@mkdir -p release_debug/lib/
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
+	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
+
+endef
+
 # Creates rules to create an executable with all the given files in the src folder
 
 define add_src_executable
