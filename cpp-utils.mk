@@ -50,6 +50,50 @@ release_debug/$(1)/%.cpp.s: $(1)/%.cpp
 
 endef
 
+# Create rules to compile each .cpp and cu file of a folder
+
+define folder_compile_gpu
+
+# Object files
+
+debug/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p debug/$(1)/
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cpp.d
+
+release/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p release/$(1)/
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cpp.d
+
+release_debug/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p release_debug/$(1)/
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cpp.d
+
+debug/$(1)/%.cu.o: $(1)/%.cu
+	@mkdir -p debug/$(1)/
+	@echo -e "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
+	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler debug/$(1)/$$*.cu.d -o debug/$(1)/$$*.cu.o -c $(1)/$$*.cu
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cu.d
+
+release/$(1)/%.cu.o: $(1)/%.cu
+	@mkdir -p release/$(1)/
+	@echo -e "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
+	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release/$(1)/$$*.cu.d -o release/$(1)/$$*.cu.o -c $(1)/$$*.cu
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cu.d
+
+release_debug/$(1)/%.cu.o: $(1)/%.cu
+	@mkdir -p release_debug/$(1)/
+	@echo -e "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
+	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release_debug/$(1)/$$*.cu.d -o release_debug/$(1)/$$*.cu.o -c $(1)/$$*.cu
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cu.d
+
+endef
+
 # Create rules to compile each .c file of a folder (C files are compiled in C++ mode)
 
 define simple_c_folder_compile
