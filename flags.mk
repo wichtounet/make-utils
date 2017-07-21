@@ -105,3 +105,17 @@ endif
 endif
 
 endef
+
+# Enable coverage flags on release_debug mode only
+
+define enable_coverage_release_debug
+
+ifneq (,$(findstring clang,$(CXX)))
+RELEASE_DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
+else
+ifneq (,$(findstring g++,$(CXX)))
+RELEASE_DEBUG_FLAGS += --coverage
+endif
+endif
+
+endef
