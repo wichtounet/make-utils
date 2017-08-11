@@ -10,7 +10,7 @@ else
 endif
 endif
 
-CXX_FLAGS += -Iinclude -std=c++1y $(WARNING_FLAGS)
+CXX_FLAGS += -Iinclude $(WARNING_FLAGS)
 LD_FLAGS += $(CXX_FLAGS)
 
 DEBUG_FLAGS += -g
@@ -63,6 +63,24 @@ endif
 ifneq (,$(findstring templight,$(CXX)))
 CXX_FLAGS += -Xtemplight -profiler -Xtemplight -memory -Xtemplight -ignore-system
 endif
+
+# Use C++11
+
+define use_cpp11
+CXX_FLAGS += -std=c++11
+endef
+
+# Use C++14
+
+define use_cpp14
+CXX_FLAGS += -std=c++14
+endef
+
+# Use C++17
+
+define use_cpp17
+CXX_FLAGS += -std=c++1z
+endef
 
 # Use libc++ if the compiler is clang
 
