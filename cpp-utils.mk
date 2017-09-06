@@ -202,6 +202,18 @@ AUTO_CXX_SRC_FILES += $(wildcard $(1)/*.cpp)
 
 endef
 
+# Create rules to compile cpp files in the given folder and gather source files from it
+
+define auto_folder_compile_gpu
+
+$(eval $(call folder_compile_gpu,$(1),$(2)))
+
+AUTO_SRC_FILES += $(wildcard $(1)/*.cpp) $(wildcard $(1)/*.cu)
+AUTO_CXX_SRC_FILES += $(wildcard $(1)/*.cpp)
+AUTO_GPU_SRC_FILES += $(wildcard $(1)/*.cu)
+
+endef
+
 # Create rules to compile C files in the given folder and gather source files from it
 
 define auto_simple_c_folder_compile
@@ -311,9 +323,9 @@ endef
 
 define auto_finalize
 
-AUTO_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=debug/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=debug/%.c.d)
-AUTO_RELEASE_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release/%.c.d)
-AUTO_RELEASE_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release_debug/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release_debug/%.c.d)
+AUTO_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=debug/%.cpp.d) $(AUTO_GPU_SRC_FILES:%.cu=debug/%.cu.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=debug/%.c.d)
+AUTO_RELEASE_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release/%.c.d)
+AUTO_RELEASE_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release_debug/%.cpp.d) $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release_debug/%.c.d)
 
 endef
 
