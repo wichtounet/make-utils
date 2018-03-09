@@ -13,20 +13,10 @@ endif
 CXX_FLAGS += -Iinclude $(WARNING_FLAGS)
 LD_FLAGS += $(CXX_FLAGS)
 
+# Custom optimization flags
 DEBUG_FLAGS += -g
 RELEASE_DEBUG_FLAGS += -g -O2
-
-# Optimize flags based on compiler
-
-ifneq (,$(findstring clang,$(CXX)))
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
-else
-ifneq (,$(findstring c++-analyzer,$(CXX)))
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -fvectorize -fslp-vectorize-aggressive -fomit-frame-pointer
-else
-	RELEASE_FLAGS=-g -DNDEBUG -O3 -fomit-frame-pointer
-endif
-endif
+RELEASE_FLAGS += -g -DNDEBUG -O3 -fomit-frame-pointer
 
 # Find the correct arch (when using distcc)
 
