@@ -2,7 +2,7 @@ AUTO_CXX_SRC_FILES=
 AUTO_SIMPLE_C_SRC_FILES=
 
 # Configure the colors (optional)
-ifeq (,$(MU_NOCOLOR))
+ifneq (1,$(MU_NOCOLOR))
 NO_COLOR=\x1b[0m
 MODE_COLOR=\x1b[31;01m
 FILE_COLOR=\x1b[35;01m
