@@ -69,7 +69,13 @@ endef
 # Use C++17
 
 define use_cpp17
-CXX_FLAGS += -std=c++1z
+CXX_FLAGS += -std=c++17
+endef
+
+# Use C++20
+
+define use_cpp20
+CXX_FLAGS += -std=c++2a
 endef
 
 # Use libc++ if the compiler is clang
