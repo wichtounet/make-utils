@@ -288,6 +288,25 @@ define add_test_executable
 
 $(eval $(call add_executable,$(1),$(addprefix test/,$(2)),$(3)))
 
+TEST_EXECUTABLES += $(1)
+
+DEBUG_TEST_EXECUTABLES += debug/bin/$(1)
+RELEASE_DEBUG_TEST_EXECUTABLES += release_debug/bin/$(1)
+RELEASE_TEST_EXECUTABLES += release/bin/$(1)
+
+run_debug_$(1): debug/bin/$(1)
+	./debug/bin/$(1)
+
+run_release_debug_$(1): release_debug/bin/$(1)
+	./release_debug/bin/$(1)
+
+run_release_$(1): release/bin/$(1)
+	./release/bin/$(1)
+
+DEBUG_TEST_TARGETS += run_debug_$(1)
+RELEASE_DEBUG_TEST_TARGETS += run_release_debug_$(1)
+RELEASE_TEST_TARGETS += run_release_$(1)
+
 endef
 
 # Creates rules to create an executable with all the files of the src folder
@@ -303,6 +322,25 @@ endef
 define add_auto_test_executable
 
 $(eval $(call add_executable,$(1),$(wildcard test/*.cpp)))
+
+TEST_EXECUTABLES += $(1)
+
+DEBUG_TEST_EXECUTABLES += debug/bin/$(1)
+RELEASE_DEBUG_TEST_EXECUTABLES += release_debug/bin/$(1)
+RELEASE_TEST_EXECUTABLES += release/bin/$(1)
+
+run_debug_$(1): debug/bin/$(1)
+	./debug/bin/$(1)
+
+run_release_debug_$(1): release_debug/bin/$(1)
+	./release_debug/bin/$(1)
+
+run_release_$(1): release/bin/$(1)
+	./release/bin/$(1)
+
+DEBUG_TEST_TARGETS += run_debug_$(1)
+RELEASE_DEBUG_TEST_TARGETS += run_release_debug_$(1)
+RELEASE_TEST_TARGETS += run_release_$(1)
 
 endef
 
