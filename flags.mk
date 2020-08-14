@@ -92,6 +92,12 @@ endif
 
 endef
 
+# Enable ASAN flags on debug mode only
+
+define enable_asan_debug
+DEBUG_FLAGS += -fsanitize=address
+endef
+
 # Enable coverage flags on debug mode only
 
 define enable_coverage
