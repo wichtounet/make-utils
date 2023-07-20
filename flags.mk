@@ -78,6 +78,18 @@ define use_cpp20
 CXX_FLAGS += -std=c++2a
 endef
 
+# Use C++20
+
+define use_cpp20
+CXX_FLAGS += -std=c++20
+endef
+
+# Use C++20
+
+define use_cpp23
+CXX_FLAGS += -std=c++23
+endef
+
 # Use libc++ if the compiler is clang
 
 define use_libcxx
