@@ -75,19 +75,17 @@ endef
 # Use C++20
 
 define use_cpp20
-CXX_FLAGS += -std=c++2a
-endef
-
-# Use C++20
-
-define use_cpp20
 CXX_FLAGS += -std=c++20
 endef
 
 # Use C++20
 
 define use_cpp23
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -std=c++2a
+else
 CXX_FLAGS += -std=c++23
+endif
 endef
 
 # Use libc++ if the compiler is clang
