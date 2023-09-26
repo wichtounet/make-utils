@@ -78,7 +78,7 @@ define use_cpp20
 CXX_FLAGS += -std=c++20
 endef
 
-# Use C++20
+# Use C++23
 
 define use_cpp23
 ifneq (,$(findstring clang,$(CXX)))
