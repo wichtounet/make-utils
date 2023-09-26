@@ -82,7 +82,11 @@ endef
 
 define use_cpp23
 ifneq (,$(findstring clang,$(CXX)))
+ifneq (,$(findstring 17,$(CXX)))
+CXX_FLAGS += -std=c++23
+else
 CXX_FLAGS += -std=c++2a
+endif
 else
 CXX_FLAGS += -std=c++23
 endif
