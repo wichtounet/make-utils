@@ -120,7 +120,7 @@ ifneq (,$(findstring clang,$(CXX)))
 DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
 else
 ifneq (,$(findstring g++,$(CXX)))
-DEBUG_FLAGS += --coverage
+DEBUG_FLAGS += --coverage -fprofile-abs-path
 endif
 endif
 
@@ -134,7 +134,7 @@ ifneq (,$(findstring clang,$(CXX)))
 RELEASE_FLAGS += -fprofile-arcs -ftest-coverage
 else
 ifneq (,$(findstring g++,$(CXX)))
-RELEASE_FLAGS += --coverage
+RELEASE_FLAGS += --coverage -fprofile-abs-path
 endif
 endif
 
@@ -148,7 +148,7 @@ ifneq (,$(findstring clang,$(CXX)))
 RELEASE_DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
 else
 ifneq (,$(findstring g++,$(CXX)))
-RELEASE_DEBUG_FLAGS += --coverage
+RELEASE_DEBUG_FLAGS += --coverage -fprofile-abs-path
 endif
 endif
 
