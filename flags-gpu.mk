@@ -10,8 +10,20 @@ else
 endif
 endif
 
-CXX_FLAGS += -Iinclude -std=c++11 $(WARNING_FLAGS)
+CXX_FLAGS += -Iinclude $(WARNING_FLAGS)
 LD_FLAGS += $(CXX_FLAGS)
+
+# Use C++11
+
+define use_cpp11
+CXX_FLAGS += -std=c++11
+endef
+
+# Use C++14
+
+define use_cpp14
+CXX_FLAGS += -std=c++14
+endef
 
 DEBUG_FLAGS += -g
 RELEASE_DEBUG_FLAGS += -g -O2
