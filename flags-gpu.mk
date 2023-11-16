@@ -25,6 +25,12 @@ define use_cpp14
 CXX_FLAGS += -std=c++14
 endef
 
+# Use C++17
+
+define use_cpp17
+CXX_FLAGS += -std=c++17
+endef
+
 DEBUG_FLAGS += -g
 RELEASE_DEBUG_FLAGS += -g -O2
 
