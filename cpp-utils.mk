@@ -380,7 +380,7 @@ endef
 
 compile_commands.json:
 	${MAKE} clean
-	bear make debug
+	bear -- make debug
 
 compile_db: compile_commands.json ;
 
