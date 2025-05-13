@@ -92,6 +92,10 @@ CXX_FLAGS += -std=c++23
 endif
 endef
 
+define use_cpp26
+CXX_FLAGS += -std=c++26
+endef
+
 # Use libc++ if the compiler is clang
 
 define use_libcxx
