@@ -6,13 +6,19 @@ ifneq (1,$(MU_NOCOLOR))
 NO_COLOR=\e[0m
 MODE_COLOR=\e[31;01m
 FILE_COLOR=\e[35;01m
+COMPILER_COLOR=\e[32;01m
 else
 NO_COLOR=
 MODE_COLOR=
 FILE_COLOR=
+COMPILER_COLOR=
 endif
 
 Q ?= @
+
+debug=debug/$(cc_out)
+release=release/$(cc_out)
+release_debug=release_debug/$(cc_out)
 
 # Create rules to compile each .cpp file of a folder
 
@@ -20,40 +26,40 @@ define folder_compile
 
 # Object files
 
-debug/$(1)/%.cpp.o: $(1)/%.cpp
-	@mkdir -p debug/$(1)/
-	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -MD -MF debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cpp.d
+$(debug)/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p $(debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -MD -MF $(debug)/$(1)/$$*.cpp.d -o $(debug)/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(debug)/$(1)/$$*.cpp.d
 
-release/$(1)/%.cpp.o: $(1)/%.cpp
-	@mkdir -p release/$(1)/
-	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -MD -MF release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cpp.d
+$(release)/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p $(release)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -MD -MF $(release)/$(1)/$$*.cpp.d -o $(release)/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release)/$(1)/$$*.cpp.d
 
-release_debug/$(1)/%.cpp.o: $(1)/%.cpp
-	@mkdir -p release_debug/$(1)/
-	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cpp.d
+$(release_debug)/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p $(release_debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -MD -MF $(release_debug)/$(1)/$$*.cpp.d -o $(release_debug)/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release_debug)/$(1)/$$*.cpp.d
 
 # Assembly files
 
-debug/$(1)/%.cpp.s: $(1)/%.cpp
-	@mkdir -p debug/$(1)/
-	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) -S $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -o debug/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
+$(debug)/$(1)/%.cpp.s: $(1)/%.cpp
+	@mkdir -p $(debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[debug]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) -S $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -o $(debug)/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
 
-release/$(1)/%.cpp.s: $(1)/%.cpp
-	@mkdir -p release/$(1)/
-	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) -S $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -o release/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
+$(release)/$(1)/%.cpp.s: $(1)/%.cpp
+	@mkdir -p $(release)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) -S $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -o $(release)/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
 
-release_debug/$(1)/%.cpp.s: $(1)/%.cpp
-	@mkdir -p release_debug/$(1)/
-	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) -S $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -o release_debug/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
+$(release_debug)/$(1)/%.cpp.s: $(1)/%.cpp
+	@mkdir -p $(release_debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release_debug]$(NO_COLOR) Compile (assembly) $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) -S $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -o $(release_debug)/$(1)/$$*.cpp.s -c $(1)/$$*.cpp
 
 endef
 
@@ -63,41 +69,41 @@ define folder_compile_gpu
 
 # Object files
 
-debug/$(1)/%.cpp.o: $(1)/%.cpp
-	@mkdir -p debug/$(1)/
-	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler debug/$(1)/$$*.cpp.d -o debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cpp.d
+$(debug)/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p $(debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler $(debug)/$(1)/$$*.cpp.d -o $(debug)/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(debug)/$(1)/$$*.cpp.d
 
-release/$(1)/%.cpp.o: $(1)/%.cpp
-	@mkdir -p release/$(1)/
-	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release/$(1)/$$*.cpp.d -o release/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cpp.d
+$(release)/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p $(release)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler $(release)/$(1)/$$*.cpp.d -o $(release)/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release)/$(1)/$$*.cpp.d
 
-release_debug/$(1)/%.cpp.o: $(1)/%.cpp
-	@mkdir -p release_debug/$(1)/
-	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release_debug/$(1)/$$*.cpp.d -o release_debug/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cpp.d
+$(release_debug)/$(1)/%.cpp.o: $(1)/%.cpp
+	@mkdir -p $(release_debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cpp$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler $(release_debug)/$(1)/$$*.cpp.d -o $(release_debug)/$(1)/$$*.cpp.o -c $(1)/$$*.cpp
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release_debug)/$(1)/$$*.cpp.d
 
-debug/$(1)/%.cu.o: $(1)/%.cu
-	@mkdir -p debug/$(1)/
-	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
-	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler debug/$(1)/$$*.cu.d -o debug/$(1)/$$*.cu.o -c $(1)/$$*.cu
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.cu.d
+$(debug)/$(1)/%.cu.o: $(1)/%.cu
+	@mkdir -p $(debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
+	$(Q)$(cxx) $(DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler $(debug)/$(1)/$$*.cu.d -o $(debug)/$(1)/$$*.cu.o -c $(1)/$$*.cu
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(debug)/$(1)/$$*.cu.d
 
-release/$(1)/%.cu.o: $(1)/%.cu
-	@mkdir -p release/$(1)/
-	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release/$(1)/$$*.cu.d -o release/$(1)/$$*.cu.o -c $(1)/$$*.cu
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.cu.d
+$(release)/$(1)/%.cu.o: $(1)/%.cu
+	@mkdir -p $(release)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler $(release)/$(1)/$$*.cu.d -o $(release)/$(1)/$$*.cu.o -c $(1)/$$*.cu
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release)/$(1)/$$*.cu.d
 
-release_debug/$(1)/%.cu.o: $(1)/%.cu
-	@mkdir -p release_debug/$(1)/
-	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler release_debug/$(1)/$$*.cu.d -o release_debug/$(1)/$$*.cu.o -c $(1)/$$*.cu
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.cu.d
+$(release_debug)/$(1)/%.cu.o: $(1)/%.cu
+	@mkdir -p $(release_debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.cu$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) $(2) -Xcompiler -MD -Xcompiler -MF -Xcompiler $(release_debug)/$(1)/$$*.cu.d -o $(release_debug)/$(1)/$$*.cu.o -c $(1)/$$*.cu
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release_debug)/$(1)/$$*.cu.d
 
 endef
 
@@ -105,64 +111,64 @@ endef
 
 define simple_c_folder_compile
 
-debug/$(1)/%.c.o: $(1)/%.c
-	@ mkdir -p debug/$(1)/
-	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF debug/$(1)/$$*.c.d -o debug/$(1)/$$*.c.o -c $(1)/$$*.c
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$$*.c.d
+$(debug)/$(1)/%.c.o: $(1)/%.c
+	@ mkdir -p $(debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
+	$(Q)$(cxx) $(CXX_FLAGS) $(DEBUG_FLAGS) $(2) -MD -MF $(debug)/$(1)/$$*.c.d -o $(debug)/$(1)/$$*.c.o -c $(1)/$$*.c
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(debug)/$(1)/$$*.c.d
 
-release/$(1)/%.c.o: $(1)/%.c
-	@ mkdir -p release/$(1)/
-	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF release/$(1)/$$*.c.d -o release/$(1)/$$*.c.o -c $(1)/$$*.c
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$$*.c.d
+$(release)/$(1)/%.c.o: $(1)/%.c
+	@ mkdir -p $(release)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
+	$(Q)$(cxx) $(CXX_FLAGS) $(RELEASE_FLAGS) $(2) -MD -MF $(release)/$(1)/$$*.c.d -o $(release)/$(1)/$$*.c.o -c $(1)/$$*.c
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release)/$(1)/$$*.c.d
 
-release_debug/$(1)/%.c.o: $(1)/%.c
-	@ mkdir -p release_debug/$(1)/
-	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
-	$(Q)$(CXX) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF release_debug/$(1)/$$*.c.d -o release_debug/$(1)/$$*.c.o -c $(1)/$$*.c
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$$*.c.d
+$(release_debug)/$(1)/%.c.o: $(1)/%.c
+	@ mkdir -p $(release_debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release_debug]$(NO_COLOR) Compile $(FILE_COLOR)$(1)/$$*.c$(NO_COLOR)"
+	$(Q)$(cxx) $(CXX_FLAGS) $(RELEASE_DEBUG_FLAGS) $(2) -MD -MF $(release_debug)/$(1)/$$*.c.d -o $(release_debug)/$(1)/$$*.c.o -c $(1)/$$*.c
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release_debug)/$(1)/$$*.c.d
 
 endef
 
 define precompile_init
 
-DEBUG_FLAGS = -Idebug/$(1) $(DEBUG_FLAGS)
-RELEASE_FLAGS = -Irelease/$(1) $(RELEASE_FLAGS)
-RELEASE_DEBUG_FLAGS = -Irelease_debug/$(1) $(RELEASE_DEBUG_FLAGS)
+DEBUG_FLAGS = -I$(debug)/$(1) $(DEBUG_FLAGS)
+RELEASE_FLAGS = -I$(release)/$(1) $(RELEASE_FLAGS)
+RELEASE_DEBUG_FLAGS = -I$(release_debug)/$(1) $(RELEASE_DEBUG_FLAGS)
 
 endef
 
 define precompile_header
 
-debug/$(1)/$(2).gch: $(1)/$(2)
-	@mkdir -p debug/$(1)/
-	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) $(DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF debug/$(1)/$(2).d -o debug/$(1)/$(2).gch -c $(1)/$(2)
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' debug/$(1)/$(2).d
-	@ echo "#error PCH Header was not used (probably invalid)" > debug/$(1)/$(2)
+$(debug)/$(1)/$(2).gch: $(1)/$(2)
+	@mkdir -p $(debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
+	$(Q)$(cxx) $(DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF $(debug)/$(1)/$(2).d -o $(debug)/$(1)/$(2).gch -c $(1)/$(2)
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(debug)/$(1)/$(2).d
+	@ echo "#error PCH Header was not used (probably invalid)" > $(debug)/$(1)/$(2)
 
-release/$(1)/$(2).gch: $(1)/$(2)
-	@mkdir -p release/$(1)/
-	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_FLAGS) $(CXX_FLAGS) -MD -MF release/$(1)/$(2).d -o release/$(1)/$(2).gch -c $(1)/$(2)
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release/$(1)/$(2).d
-	@ echo "#error PCH Header was not used (probably invalid)" > release/$(1)/$(2)
+$(release)/$(1)/$(2).gch: $(1)/$(2)
+	@mkdir -p $(release)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_FLAGS) $(CXX_FLAGS) -MD -MF $(release)/$(1)/$(2).d -o $(release)/$(1)/$(2).gch -c $(1)/$(2)
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release)/$(1)/$(2).d
+	@ echo "#error PCH Header was not used (probably invalid)" > $(release)/$(1)/$(2)
 
-release_debug/$(1)/$(2).gch: $(1)/$(2)
-	@mkdir -p release_debug/$(1)/
-	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF release_debug/$(1)/$(2).d -o release_debug/$(1)/$(2).gch -c $(1)/$(2)
-	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' release_debug/$(1)/$(2).d
-	@ echo "#error PCH Header was not used (probably invalid)" > release_debug/$(1)/$(2)
+$(release_debug)/$(1)/$(2).gch: $(1)/$(2)
+	@mkdir -p $(release_debug)/$(1)/
+	@echo "$(COMPILER_COLOR)[$(compiler)]$(NO_COLOR) $(MODE_COLOR)[release_debug]$(NO_COLOR) Precompile header $(FILE_COLOR)$(1)/$(2)$(NO_COLOR)"
+	$(Q)$(cxx) $(RELEASE_DEBUG_FLAGS) $(CXX_FLAGS) -MD -MF $(release_debug)/$(1)/$(2).d -o $(release_debug)/$(1)/$(2).gch -c $(1)/$(2)
+	@ sed -i -e 's@^\(.*\)\.o:@\1.d \1.o:@' $(release_debug)/$(1)/$(2).d
+	@ echo "#error PCH Header was not used (probably invalid)" > $(release_debug)/$(1)/$(2)
 
-DEBUG_PCH_FILES += debug/$(1)/$(2).gch
-RELEASE_PCH_FILES += release/$(1)/$(2).gch
-RELEASE_DEBUG_PCH_FILES += release_debug/$(1)/$(2).gch
+DEBUG_PCH_FILES += $(debug)/$(1)/$(2).gch
+RELEASE_PCH_FILES += $(release)/$(1)/$(2).gch
+RELEASE_DEBUG_PCH_FILES += $(release_debug)/$(1)/$(2).gch
 
-AUTO_DEBUG_D_FILES += debug/$(1)/$(2).d
-AUTO_RELEASE_D_FILES += release/$(1)/$(2).d
-AUTO_RELEASE_DEBUG_D_FILES += release_debug/$(1)/$(2).d
+AUTO_DEBUG_D_FILES += $(debug)/$(1)/$(2).d
+AUTO_RELEASE_D_FILES += $(release)/$(1)/$(2).d
+AUTO_RELEASE_DEBUG_D_FILES += $(release_debug)/$(1)/$(2).d
 
 endef
 
@@ -236,20 +242,20 @@ endef
 
 define add_executable
 
-debug/bin/$(1): $(addsuffix .o,$(addprefix debug/,$(2)))
-	@mkdir -p debug/bin/
+$(debug)/bin/$(1): $(addsuffix .o,$(addprefix $(debug)/,$(2)))
+	@mkdir -p $(debug)/bin/
 	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(CXX) $(DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(cxx) $(DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
-release/bin/$(1): $(addsuffix .o,$(addprefix release/,$(2)))
-	@mkdir -p release/bin/
+$(release)/bin/$(1): $(addsuffix .o,$(addprefix $(release)/,$(2)))
+	@mkdir -p $(release)/bin/
 	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(cxx) $(RELEASE_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
-release_debug/bin/$(1): $(addsuffix .o,$(addprefix release_debug/,$(2)))
-	@mkdir -p release_debug/bin/
+$(release_debug)/bin/$(1): $(addsuffix .o,$(addprefix $(release_debug)/,$(2)))
+	@mkdir -p $(release_debug)/bin/
 	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(cxx) $(RELEASE_DEBUG_FLAGS) -o $$@ $$+ $(LD_FLAGS) $(3)
 
 endef
 
@@ -257,20 +263,20 @@ endef
 
 define add_shared_library
 
-debug/lib/$(1).so: $(addsuffix .o,$(addprefix debug/,$(2)))
-	@mkdir -p debug/lib/
+$(debug)/lib/$(1).so: $(addsuffix .o,$(addprefix $(debug)/,$(2)))
+	@mkdir -p $(debug)/lib/
 	@echo "$(MODE_COLOR)[debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(CXX) $(DEBUG_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(cxx) $(DEBUG_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
 
-release/lib/$(1).so: $(addsuffix .o,$(addprefix release/,$(2)))
-	@mkdir -p release/lib/
+$(release)/lib/$(1).so: $(addsuffix .o,$(addprefix $(release)/,$(2)))
+	@mkdir -p $(release)/lib/
 	@echo "$(MODE_COLOR)[release]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(cxx) $(RELEASE_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
 
-release_debug/lib/$(1).so: $(addsuffix .o,$(addprefix release_debug/,$(2)))
-	@mkdir -p release_debug/lib/
+$(release_debug)/lib/$(1).so: $(addsuffix .o,$(addprefix $(release_debug)/,$(2)))
+	@mkdir -p $(release_debug)/lib/
 	@echo "$(MODE_COLOR)[release_debug]$(NO_COLOR) Link $(FILE_COLOR)$$@$(NO_COLOR)"
-	$(Q)$(CXX) $(RELEASE_DEBUG_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
+	$(Q)$(cxx) $(RELEASE_DEBUG_FLAGS) --shared -o $$@ $$+ $(LD_FLAGS) $(3)
 
 endef
 
@@ -290,18 +296,18 @@ $(eval $(call add_executable,$(1),$(addprefix test/,$(2)),$(3)))
 
 TEST_EXECUTABLES += $(1)
 
-DEBUG_TEST_EXECUTABLES += debug/bin/$(1)
-RELEASE_DEBUG_TEST_EXECUTABLES += release_debug/bin/$(1)
-RELEASE_TEST_EXECUTABLES += release/bin/$(1)
+DEBUG_TEST_EXECUTABLES += $(debug)/bin/$(1)
+RELEASE_DEBUG_TEST_EXECUTABLES += $(release_debug)/bin/$(1)
+RELEASE_TEST_EXECUTABLES += $(release)/bin/$(1)
 
-run_debug_$(1): debug/bin/$(1)
-	./debug/bin/$(1)
+run_debug_$(1): $(debug)/bin/$(1)
+	./$(debug)/bin/$(1)
 
-run_release_debug_$(1): release_debug/bin/$(1)
-	./release_debug/bin/$(1)
+run_release_debug_$(1): $(release_debug)/bin/$(1)
+	./$(release_debug)/bin/$(1)
 
-run_release_$(1): release/bin/$(1)
-	./release/bin/$(1)
+run_release_$(1): $(release)/bin/$(1)
+	./$(release)/bin/$(1)
 
 DEBUG_TEST_TARGETS += run_debug_$(1)
 RELEASE_DEBUG_TEST_TARGETS += run_release_debug_$(1)
@@ -325,18 +331,18 @@ $(eval $(call add_executable,$(1),$(wildcard test/*.cpp)))
 
 TEST_EXECUTABLES += $(1)
 
-DEBUG_TEST_EXECUTABLES += debug/bin/$(1)
-RELEASE_DEBUG_TEST_EXECUTABLES += release_debug/bin/$(1)
-RELEASE_TEST_EXECUTABLES += release/bin/$(1)
+DEBUG_TEST_EXECUTABLES += $(debug)/bin/$(1)
+RELEASE_DEBUG_TEST_EXECUTABLES += $(release_debug)/bin/$(1)
+RELEASE_TEST_EXECUTABLES += $(release)/bin/$(1)
 
-run_debug_$(1): debug/bin/$(1)
-	./debug/bin/$(1)
+run_debug_$(1): $(debug)/bin/$(1)
+	./$(debug)/bin/$(1)
 
-run_release_debug_$(1): release_debug/bin/$(1)
-	./release_debug/bin/$(1)
+run_release_debug_$(1): $(release_debug)/bin/$(1)
+	./$(release_debug)/bin/$(1)
 
-run_release_$(1): release/bin/$(1)
-	./release/bin/$(1)
+run_release_$(1): $(release)/bin/$(1)
+	./$(release)/bin/$(1)
 
 DEBUG_TEST_TARGETS += run_debug_$(1)
 RELEASE_DEBUG_TEST_TARGETS += run_release_debug_$(1)
@@ -357,9 +363,9 @@ endef
 
 define add_executable_set
 
-release_$(1): $(addprefix release/bin/,$(2))
-release_debug_$(1): $(addprefix release_debug/bin/,$(2))
-debug_$(1): $(addprefix debug/bin/,$(2))
+release_$(1): $(addprefix $(release)/bin/,$(2))
+release_debug_$(1): $(addprefix $(release_debug)/bin/,$(2))
+debug_$(1): $(addprefix $(debug)/bin/,$(2))
 $(1): release_$(1)
 
 endef
@@ -368,9 +374,9 @@ endef
 
 define auto_finalize
 
-AUTO_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=debug/%.cpp.d) $(AUTO_GPU_SRC_FILES:%.cu=debug/%.cu.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=debug/%.c.d)
-AUTO_RELEASE_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release/%.c.d)
-AUTO_RELEASE_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=release_debug/%.cpp.d) $(AUTO_CXX_SRC_FILES:%.cpp=release/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=release_debug/%.c.d)
+AUTO_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=$(debug)/%.cpp.d) $(AUTO_GPU_SRC_FILES:%.cu=$(debug)/%.cu.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=$(debug)/%.c.d)
+AUTO_RELEASE_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=$(release)/%.cpp.d) $(AUTO_CXX_SRC_FILES:%.cpp=$(release)/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=$(release)/%.c.d)
+AUTO_RELEASE_DEBUG_D_FILES += $(AUTO_CXX_SRC_FILES:%.cpp=$(release_debug)/%.cpp.d) $(AUTO_CXX_SRC_FILES:%.cpp=$(release)/%.cpp.d) $(AUTO_SIMPLE_C_SRC_FILES:%.c=$(release_debug)/%.c.d)
 
 endef
 

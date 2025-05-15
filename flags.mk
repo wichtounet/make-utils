@@ -1,13 +1,34 @@
+# The default compiler is gcc
+compiler=gcc
+
+ifeq (gcc, $(compiler)) 
+	version=15
+else
+ifeq (clang, $(compiler)) 
+	version=20
+else
+$(error Unsupported compiler)
+endif
+endif
+
+ifeq (gcc, $(compiler)) 
+	cc=gcc-$(version)
+	cxx=g++-$(version)
+endif
+
+ifeq (clang, $(compiler)) 
+	cc=clang-$(version)
+	cxx=clang++-$(version)
+endif
+
+cc_out=$(compiler)-${version}
+
 # Define defaults warnings flags for each compiler
 
-ifneq (,$(findstring clang,$(CXX)))
-	WARNING_FLAGS += -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
-else
-ifneq (,$(findstring c++-analyzer,$(CXX)))
+ifeq (clang, $(compiler))
 	WARNING_FLAGS += -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation
 else
 	WARNING_FLAGS += -Wextra -Wall -Wuninitialized -Wno-long-long -Winit-self
-endif
 endif
 
 CXX_FLAGS += -Iinclude $(WARNING_FLAGS)
@@ -18,41 +39,9 @@ DEBUG_FLAGS += -g
 RELEASE_DEBUG_FLAGS += -g -O2
 RELEASE_FLAGS += -g -DNDEBUG -O3 -fomit-frame-pointer
 
-# Find the correct arch (when using distcc)
-
-ifneq (,$(findstring distcc,$(CXX)))
-ifeq (,$(COMPILER_ARCH))
-	arch=$(shell g++ -march=native -Q --help=target | grep march | xargs | tr ' ' '\n' | tail -1)
-else
-	arch=$(COMPILER_ARCH)
-endif
-
-# The equivalent of haswell for clang is core-avx2
-ifeq (haswell,$(arch))
-ifneq (,$(findstring clang,$(CXX)))
-	arch=core-avx2
-endif
-ifneq (,$(findstring c++-analyzer,$(CXX)))
-	arch=core-avx2
-endif
-endif
-
-	#Find the equivalent march
-	RELEASE_FLAGS += -march=$(arch)
-	RELEASE_DEBUG_FLAGS += -march=$(arch)
-
-	#TODO This is enough for clang++, but GCC needs much more arguments to simulate march=native
-else
-	#Without distcc, just use march=native
-	RELEASE_FLAGS += -march=native
-	RELEASE_DEBUG_FLAGS += -march=native
-endif
-
-# Add support flags for templight
-
-ifneq (,$(findstring templight,$(CXX)))
-CXX_FLAGS += -Xtemplight -profiler -Xtemplight -memory -Xtemplight -ignore-system
-endif
+# just use march=native
+RELEASE_FLAGS += -march=native
+RELEASE_DEBUG_FLAGS += -march=native
 
 # Use C++11
 
@@ -81,16 +70,10 @@ endef
 # Use C++23
 
 define use_cpp23
-ifneq (,$(findstring clang,$(CXX)))
-ifneq (,$(findstring 17,$(CXX)))
 CXX_FLAGS += -std=c++23
-else
-CXX_FLAGS += -std=c++2a
-endif
-else
-CXX_FLAGS += -std=c++23
-endif
 endef
+
+# Use C++26
 
 define use_cpp26
 CXX_FLAGS += -std=c++26
@@ -100,11 +83,7 @@ endef
 
 define use_libcxx
 
-ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -stdlib=libc++
-endif
-
-ifneq (,$(findstring c++-analyzer,$(CXX)))
+ifeq (clang, $(compiler))
 CXX_FLAGS += -stdlib=libc++
 endif
 
@@ -120,12 +99,12 @@ endef
 
 define enable_coverage
 
-ifneq (,$(findstring clang,$(CXX)))
+ifeq (clang, $(compiler))
 DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
-else
-ifneq (,$(findstring g++,$(CXX)))
-DEBUG_FLAGS += --coverage -fprofile-abs-path
 endif
+
+ifeq (gcc, $(compiler))
+DEBUG_FLAGS += --coverage -fprofile-abs-path
 endif
 
 endef
@@ -134,12 +113,12 @@ endef
 
 define enable_coverage_release
 
-ifneq (,$(findstring clang,$(CXX)))
+ifeq (clang, $(compiler))
 RELEASE_FLAGS += -fprofile-arcs -ftest-coverage
-else
-ifneq (,$(findstring g++,$(CXX)))
-RELEASE_FLAGS += --coverage -fprofile-abs-path
 endif
+
+ifeq (gcc, $(compiler))
+RELEASE_FLAGS += --coverage -fprofile-abs-path
 endif
 
 endef
@@ -148,12 +127,12 @@ endef
 
 define enable_coverage_release_debug
 
-ifneq (,$(findstring clang,$(CXX)))
+ifeq (clang, $(compiler))
 RELEASE_DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
-else
-ifneq (,$(findstring g++,$(CXX)))
-RELEASE_DEBUG_FLAGS += --coverage -fprofile-abs-path
 endif
+
+ifeq (gcc, $(compiler))
+RELEASE_DEBUG_FLAGS += --coverage -fprofile-abs-path
 endif
 
 endef
